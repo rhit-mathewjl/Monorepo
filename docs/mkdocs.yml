@@ -14,6 +14,7 @@ nav:
     - Best Practices: tutorial/best_practices.md
     - Usage: tutorial/usage.md
     - Deployment: tutorial/deployment.md
+    - Command-Line Interface (CLI): tutorial/cli.md
   - Documentation:
     - Updating Documentation: documentation/guide.md
   - Infrastructure:
@@ -22,6 +23,7 @@ nav:
     - Cluster Upgrade: infrastructure/cluster_update.md
     - Used Technologies: infrastructure/used_technologies.md
     - Architecture Documentation: infrastructure/architecture.md
+    - (Planned) Agentic Threat Model: infrastructure/agentictm.md
   - Developer Help:
     - Developer Setup: developerhelp/setup.md
     - Helpful Commands: developerhelp/helpful_commands.md

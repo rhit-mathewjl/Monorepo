@@ -1,0 +1,108 @@
+# GLADOS CLI
+This is the command line interface version of GLADOS, allowing for more flexibility for users who desire a programmatic mode of navigating GLADOS. This tool runs using Python and requires no external libraries. The majority of this README gives an overview on CLI commands- for more information on experiment compatibility, check out the section "Experiment Compatability" at the bottom or at the following [link](https://automatingsciencepipeline.github.io/Monorepo/tutorial/usage/)
+
+Usage of this tool requires the following:
+ - Python 3.9 or later
+ - The following PIP packages: `pyyaml`, `requests`
+ - An authenticated GitHub account (see below)
+
+## Authenticate using GitHub
+
+The following command generates a token for authenticating to the GLADOS system:
+
+```sh
+python glados_cli.py --generate-token
+```
+
+After signing in via GitHub, a new file called "token.glados" will be created. This will contain your token for accessing GLADOS in the future. It is strongly recommended that you add this file to ".gitignore".
+
+Note that, unlike the main system, the CLI does not currently support using a Google account.
+
+Below are the operations you can perform (note that they are mutually exclusive unless otherwise stated).
+
+## Upload & Run Experiments
+
+To upload and run an experiment, use the `-z` or `--upload` option, passing in the path of an executable file or zip folder to the command:
+
+```sh
+python glados_cli.py -z <executable file path>
+```
+
+Additionally, there must be a manifest.yml file in the same experiment directory, declaring experiment parameters and other config variables, for running the experiment to work. See template_manifest.yml for more details, including information on experiment compatibility.
+
+Upon running the experiment, its ID will be printed, with a message saying whether the experiment successfully started or not.
+
+## Query Experiments
+
+To search experiments, use the `-q` or `--query` option:
+
+```sh
+python glados_cli.py -q <experiment title>
+```
+
+This command will display all experiments with the given title with the following information about them:
+
+- experiment id
+- experiment status
+- tags
+- number of successfully completed trials over total number of trials to run
+
+To search all experiments, use the title "*".
+
+## Download Experiment Results
+
+To download experiment results, use the `d` or `--download` option:
+
+```sh
+python glados-cli.py -d <exp_id>
+```
+
+This will save the experiment result csv file to the current user directory.
+
+## Download All Experiment Artifacts
+
+To download all experiment artifacts, including result csv file, project zip file, and system logs, use the `da` or `--download-all` option:
+
+```sh
+python glados-cli.py -da <exp_id> 
+```
+
+This will save the experiment artifacts to the current user directory.
+
+Should an error occur in running the experiment (not all the trials completing successfully), system logs can be an excellent debugging source.
+
+## Update script
+
+Each time a command is run, the version of the script is checked. If the GLADOS repository has an updated version, it prints a notifcation, encouraging an update to occur. This update can occur with the `u` or  `--update` option:
+
+```sh
+python glados-cli.py -u 
+```
+
+This will download the new CLI from the remote repository and rename the current CLI to glaods_cli_old.py.
+
+## Experiment Compatability
+
+GLADOS supports experiments that are one of the 3 types below:
+
+1. Run on Python 3.8 as a single Python file.
+2. Are packaged as an executable .jar file.
+3. Are compiled into a binary executable for Unix systems, runnable on a base Debian system.
+
+Additionally, it also accepts experiments contained in a zip file that includes one of the above file types.
+
+The following below are add-ons that can be included within a zip file submission:
+
+Users can provide a file called "userProvidedFileReqs.txt". This file is a Python requirements file. When this file is provided all packages will be automatically installed.
+Privileged users have the option to provide two files:
+
+1. packages.txt - this contains Debian packages to be installed to the runner.
+2. commandsToRun.txt - this file contains bash commands that will be run on the runner after packages have been installed.
+
+For each trial, an experiment is expected to:
+
+1. Read parameters from a config file
+2. Write results to a CSV file
+
+It is recommended to look at example compatible programs at [this link](https://github.com/AutomatingSciencePipeline/Monorepo/tree/main/example_experiments)
+You can use these programs as a reference when creating your own compatible program.
