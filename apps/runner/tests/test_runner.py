@@ -9,7 +9,7 @@ from modules import runner
 from modules.data.configData import ConfigData
 from modules.data.experiment import ExperimentData, ExperimentType
 from modules.data.parameters import parseRawHyperparameterData
-from modules.exceptions import TrialTimeoutError
+from modules.exceptions import InternalTrialFailedError, TrialTimeoutError
 
 RESULT_FILE = "result.csv"
 
@@ -110,6 +110,20 @@ class TestConductExperiment(unittest.TestCase):
 
         self.assertEqual((experiment.passes, experiment.fails, experiment.status), (2, 0, "COMPLETED"))
         self.assertEqual(self._read_results()[1:], [["0", "10", "0"], ["1", "11", "1"]])
+
+
+
+class TestDescribeError(unittest.TestCase):
+    def test_glados_error_messages_are_included(self):
+        # GLADOS errors store their text in .message, so str() on them is empty
+        try:
+            try:
+                raise InternalTrialFailedError("errors returned from pipe is KeyError")
+            except InternalTrialFailedError as inner:
+                raise InternalTrialFailedError("Encountered another exception while reading pipe") from inner
+        except InternalTrialFailedError as err:
+            self.assertEqual(runner._describe_error(err),
+                "Encountered another exception while reading pipe (caused by InternalTrialFailedError: errors returned from pipe is KeyError)")
 
 
 if __name__ == '__main__':

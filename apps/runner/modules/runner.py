@@ -233,7 +233,12 @@ def _log_trial_error(trialNum: int, err: BaseException):
 
 def _describe_error(err: BaseException):
     """Include the underlying cause (e.g. the FileNotFoundError for a missing output file) alongside the GLADOS message"""
-    message = str(err)
+    message = _error_message(err)
     if err.__cause__ is not None:
-        message += f" (caused by {type(err.__cause__).__name__}: {err.__cause__})"
+        message += f" (caused by {type(err.__cause__).__name__}: {_error_message(err.__cause__)})"
     return message
+
+
+def _error_message(err: BaseException):
+    """GLADOS errors keep their text in .message rather than in the exception args, so str() is empty for them"""
+    return getattr(err, "message", None) or str(err)
